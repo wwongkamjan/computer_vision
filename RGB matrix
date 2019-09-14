@@ -1,17 +1,43 @@
-R = I1(:,:,1) ; % REd 
-G = I1(:,:,2);  % Green
-B = I1(:,:,3) ; % Blue
+%function for RGB
 
-t1 = uint8(t1)
-R1 = t1.*I1(:,:,1)
-G1 = t1.*I1(:,:,2)
-B1 = t1.*I1(:,:,3)
+function RBGmatrix = toRGBmatrix(RBGmatrix, Image, Roipoly)
+Roipoly = uint8(Roipoly);
+R1 = Roipoly.*Image(:,:,1); %Red
+G1 = Roipoly.*Image(:,:,2); %Green
+B1 = Roipoly.*Image(:,:,3); %Blue
 
-R1 = R1(R1 > 0)
-R1 = R1'
-G1 = G1(G1 > 0)
-G1 = G1'
-B1 = B1(B1 > 0)
-B1 = B1'
+R1 = R1(R1 > 0);
+R1 = R1';
+G1 = G1(G1 > 0);
+G1 = G1';
+B1 = B1(B1 > 0);
+B1 = B1';
 
-RBGM = [R1; G1; B1]
+newRGB = [R1; G1; B1];
+RBGmatrix = [RBGmatrix newRGB];
+end
+
+% call each image and roipoly
+RBGMtest = toRGBmatrix([], I1, t1);
+RBGMtest = toRGBmatrix(RBGMtest, I2, t2);
+RBGMtest = toRGBmatrix(RBGMtest, I3, t3);
+RBGMtest = toRGBmatrix(RBGMtest, I4, t4);
+RBGMtest = toRGBmatrix(RBGMtest, I5, t5);
+RBGMtest = toRGBmatrix(RBGMtest, I6, t6);
+RBGMtest = toRGBmatrix(RBGMtest, I7, t7);
+RBGMtest = toRGBmatrix(RBGMtest, I8, t8);
+RBGMtest = toRGBmatrix(RBGMtest, I9, t9);
+RBGMtest = toRGBmatrix(RBGMtest, I10, t10);
+RBGMtest = toRGBmatrix(RBGMtest, I11, t11);
+RBGMtest = toRGBmatrix(RBGMtest, I12, t12);
+RBGMtest = toRGBmatrix(RBGMtest, I13, t13);
+RBGMtest = toRGBmatrix(RBGMtest, I14, t14);
+RBGMtest = toRGBmatrix(RBGMtest, I15, t15);
+RBGMtest = toRGBmatrix(RBGMtest, I16, t16);
+RBGMtest = toRGBmatrix(RBGMtest, I17, t17);
+RBGMtest = toRGBmatrix(RBGMtest, I18, t18);
+RBGMtest = toRGBmatrix(RBGMtest, I19, t19);
+RBGMtest = toRGBmatrix(RBGMtest, I20, t20);
+RBGMtest = toRGBmatrix(RBGMtest, I21, t21);
+RBGMtest = toRGBmatrix(RBGMtest, I22, t22);
+RBGMtest = toRGBmatrix(RBGMtest, I23, t23);
