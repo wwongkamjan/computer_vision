@@ -1,0 +1,33 @@
+%image for test
+test1 = imread('280.jpg');
+
+%call for function to get prob for each pixel
+probM = probMatrix(test1, covRGB, meanRGB);
+probM = probM*0.5
+
+%prob map for testimage
+%colors
+mycolors = [0 0 0.5; 0 1 0; 1 0 0; 1 1 0 ; 1 0.5 0];
+image(probM,'CDataMapping','scaled');
+colormap(mycolors);
+%data value range
+caxis([5*10.^(-13) 1.5*10.^(-12)]);
+
+%function -> loop to cal prob for each pixel
+
+function probM = probMatrix(testImage, covRGB, meanRGB)
+sizeM = size(testImage);
+sizeRow = sizeM(1,1);
+sizeColumn = sizeM(1,2);
+probM = zeros(sizeRow,sizeColumn);
+testImage = double(testImage);
+
+for i = 1:sizeRow
+    for j= 1:sizeColumn
+        
+    temp = [testImage(i,j,1)-meanRGB(1,1) ; testImage(i,j,2)-meanRGB(2,1) ; testImage(i,j,3)-meanRGB(3,1)];
+    probM(i,j) = (1/(sqrt((2*pi).^3)*det(covRGB)))*exp(((-1)/2).*temp'*inv(covRGB)*temp);
+    
+    end
+end
+end
