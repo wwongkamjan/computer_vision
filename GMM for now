@@ -1,0 +1,116 @@
+% expectation
+k = 3;
+
+% random for scaling factor, mean and cov
+p = rand(1,3);
+meank = rand(3,3)*255;
+
+rRG = rand;
+rRB = rand;
+rGB = rand;
+covk(:,:,1) = [rand rRG rRB; rRG rand rGB; rRB rGB rand]*10^4;
+covk(:,:,2) = [rand rRG rRB; rRG rand rGB; rRB rGB rand]*10^4;
+covk(:,:,3) = [rand rRG rRB; rRG rand rGB; rRB rGB rand]*10^4;
+
+%cluster weight -> we care only one cluster (orange)
+cw = clusterweight(RGBM, p, meank, covk, 1)
+
+%maximization
+mean = newmean(RGBM,cw)
+cov = newcov(RGBM,cw, mean)
+p = newp(RGBM,cw)
+
+function RGBMatrix = toRGBmatrix(RGBMatrix, Image, Roipoly)
+Roipoly = uint8(Roipoly);
+R1 = Roipoly.*Image(:,:,1); %Red
+G1 = Roipoly.*Image(:,:,2); %Green
+B1 = Roipoly.*Image(:,:,3); %Blue
+
+R1 = R1(R1 > 0);
+R1 = R1';
+G1 = G1(G1 > 0);
+G1 = G1';
+B1 = B1(B1 > 0);
+B1 = B1';
+
+newRGB = [R1; G1; B1];
+RGBMatrix = [RGBMatrix newRGB];
+end
+
+function cw = clusterweight(data,p,meank,covk,k)
+data = double(data);
+sizeM = size(data);
+sizeColumn = sizeM(1,2);
+cw = zeros(1,sizeColumn);
+for i = 1:sizeColumn
+    cw(1,i) = scaledg(data,p, meank, covk,i,k)/(scaledg(data,p, meank, covk,i,1)+scaledg(data,p, meank, covk,i,2)+scaledg(data,p, meank, covk,i,3));
+end
+end
+
+function sg = scaledg(data,p, meank, covk, dataindex,k)
+data = double(data);
+temp = [data(1,dataindex)-meank(1,k) ; data(2,dataindex)-meank(2,k) ; data(3,dataindex)-meank(3,k)];
+sg = p(1,k)*(1/(sqrt((2*pi).^3)*det(covk(:,:,k))))*exp(((-1)/2).*temp'*inv(covk(:,:,k))*temp);
+end
+
+function mean = newmean(data, cw)
+data = double(data);
+dataR = data(1,:);
+dataG = data(2,:);
+dataB = data(3,:);
+meanR = sum(dataR*cw','all')/sum(cw,'all');
+meanG = sum(dataG*cw','all')/sum(cw,'all');
+meanB = sum(dataB*cw','all')/sum(cw,'all');
+%sum(data'.*cw',2)
+%meantest = sum(cw'.*data',2)/sum(cw,'all')
+mean = [meanR; meanG; meanB];
+end
+
+function cov = newcov(data, cw, mean)
+data = double(data);
+sizeM = size(data);
+sizeColumn = sizeM(1,2);
+dataR = data(1,:);
+dataG = data(2,:);
+dataB = data(3,:);
+meanR = mean(1,1)*zeros(1,sizeColumn);
+meanG = mean(2,1)*zeros(1,sizeColumn);
+meanB = mean(3,1)*zeros(1,sizeColumn);
+R = dataR - meanR;
+G = dataG - meanG;
+B = dataB - meanB;
+
+RR=0;
+RG=0;
+RB=0;
+GG=0;
+GB=0;
+BB=0;
+
+for i= 1:sizeColumn
+    RR = RR+cw(1,i)*R(1,i)*R(1,i);
+    RG = RG+cw(1,i)*R(1,i)*G(1,i);
+    RB = RB+cw(1,i)*R(1,i)*B(1,i);
+    GG = GG+cw(1,i)*G(1,i)*G(1,i);
+    GB = GB+cw(1,i)*G(1,i)*B(1,i);
+    BB = BB+cw(1,i)*B(1,i)*B(1,i);
+end
+
+covRR = RR/sum(cw,'all');
+covRG = RG/sum(cw,'all');
+covRB = RB/sum(cw,'all');
+covGG = GG/sum(cw,'all');
+covGB = GB/sum(cw,'all');
+covBB = BB/sum(cw,'all');
+
+cov = [covRR covRG covRB; covRG covGG covGB; covRB covGB covBB];
+
+
+end
+
+function p = newp(data,cw)
+data = double(data);
+sizeM = size(data);
+sizeColumn = sizeM(1,2);
+p = sum(cw,'all')/sizeColumn;
+end
