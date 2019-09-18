@@ -1,3 +1,63 @@
+% expectation
+k = 5;
+
+
+% random for scaling factor, mean and cov
+p = 1/k*ones(1,k);
+%p = rand(1,k);
+meank = rand(3,k)*255;
+
+covk = zeros(3,3,k);
+for i = 1:k
+    covk(:,:,i) = 0.5*eye(3)*10^4;
+end
+
+for j = 1:k
+maxi = 30;
+i=0;
+mean=zeros(3,1);
+while i <= maxi && abs(sum(meank(:,j) - mean,'all')) > 1
+    
+    if i >= 1
+        %abs(sum(meank(:,j) - mean,'all'))
+        meank(:,j) = mean;
+        covk(:,:,j) = cov;
+        p(:,j) = p1;
+    end
+
+%cluster weight -> we care only one cluster (orange)
+cw = clusterweight(RGBM, p, meank, covk, j,k);
+
+
+%maximization
+mean = newmean(RGBM,cw);
+cov = newcov(RGBM,cw, mean);
+p1 = newp(RGBM,cw);
+
+%check
+i=i+1;
+
+end
+abs(sum(meank(:,j) - mean,'all'))
+meank(:,j) = mean;
+covk(:,:,j) = cov;
+p(:,j) = p1;
+i
+j
+
+end
+
+meank
+covk
+p
+
+%h=error_ellipse(covk(:,:,1))
+
+%test = imread('99.jpg');
+
+
+
+
 function RGBMatrix = toRGBmatrix(RGBMatrix, Image, Roipoly)
 Roipoly = uint8(Roipoly);
 R1 = Roipoly.*Image(:,:,1); %Red
