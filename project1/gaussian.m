@@ -34,9 +34,9 @@ datasize = numCols;
 meanRGB = sum(RGBM,2)/datasize
 
 % find cov
-meanR = meanRGB(1)'*ones(1,12930);
-meanG = meanRGB(2)'*ones(1,12930);
-meanB = meanRGB(3)'*ones(1,12930);
+meanR = meanRGB(1)'*ones(1,numCols);
+meanG = meanRGB(2)'*ones(1,numCols);
+meanB = meanRGB(3)'*ones(1,numCols);
 
 R = double(RGBM(1,:))-meanR;
 G = double(RGBM(2,:))-meanG;
