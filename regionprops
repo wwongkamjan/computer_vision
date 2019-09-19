@@ -1,0 +1,11 @@
+max1 = max(max(probM))
+
+temp = (probM > max1/20);
+temp2 = logical(temp);
+
+stats = regionprops(temp2,'Area');
+C = cell2mat(struct2cell(stats));
+ball_area = C(1,1);
+dist = fit_data(ball_area);
+
+runimage(probM,dist)
