@@ -6,18 +6,18 @@ load training_data
 RGBM = toRGBmatrix([], I1, t1);
 RGBM = toRGBmatrix(RGBM, I2, t2);
 RGBM = toRGBmatrix(RGBM, I3, t3);
-RGBM = toRGBmatrix(RGBM, I4, t4);
+%RGBM = toRGBmatrix(RGBM, I4, t4);
 RGBM = toRGBmatrix(RGBM, I5, t5);
 RGBM = toRGBmatrix(RGBM, I6, t6);
 RGBM = toRGBmatrix(RGBM, I7, t7);
 RGBM = toRGBmatrix(RGBM, I8, t8);
-RGBM = toRGBmatrix(RGBM, I9, t9);
+%RGBM = toRGBmatrix(RGBM, I9, t9);
 RGBM = toRGBmatrix(RGBM, I10, t10);
 RGBM = toRGBmatrix(RGBM, I11, t11);
 RGBM = toRGBmatrix(RGBM, I12, t12);
 RGBM = toRGBmatrix(RGBM, I13, t13);
 RGBM = toRGBmatrix(RGBM, I14, t14);
-RGBM = toRGBmatrix(RGBM, I15, t15);
+%RGBM = toRGBmatrix(RGBM, I15, t15);
 RGBM = toRGBmatrix(RGBM, I16, t16);
 RGBM = toRGBmatrix(RGBM, I17, t17);
 RGBM = toRGBmatrix(RGBM, I18, t18);
@@ -25,7 +25,7 @@ RGBM = toRGBmatrix(RGBM, I19, t19);
 RGBM = toRGBmatrix(RGBM, I20, t20);
 RGBM = toRGBmatrix(RGBM, I21, t21);
 RGBM = toRGBmatrix(RGBM, I22, t22);
-RGBM = toRGBmatrix(RGBM, I23, t23);
+%RGBM = toRGBmatrix(RGBM, I23, t23);
 
 %Color Classification using a Single Gaussian
 % find mean
