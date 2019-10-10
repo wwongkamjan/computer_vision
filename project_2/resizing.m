@@ -1,9 +1,10 @@
+clear all;
 % read an input 
 %imds = imageDatastore({'1.jpg','2.jpg', '3.jpg'});
-%imds = imageDatastore({'Images/Set1/1.jpg', 'Images/Set1/2.jpg', 'Images/Set1/3.jpg'});
+imds = imageDatastore({'Images/Set1/1.jpg', 'Images/Set1/2.jpg', 'Images/Set1/3.jpg'});
 %imds = imageDatastore({'Images/Set2/1.jpg', 'Images/Set2/2.jpg', 'Images/Set2/3.jpg'});
-imds = imageDatastore({'Images/Set3/1.jpg', 'Images/Set3/2.jpg', 'Images/Set3/3.jpg'});%,  'Images/Set3/4.jpg', 'Images/Set3/5.jpg', 'Images/Set3/6.jpg', 'Images/Set3/7.jpg', 'Images/Set3/8.jpg'});
-scale = 0.6;
+%imds = imageDatastore({'Images/Set3/1.jpg', 'Images/Set3/2.jpg', 'Images/Set3/3.jpg'});%,  'Images/Set3/4.jpg', 'Images/Set3/5.jpg', 'Images/Set3/6.jpg', 'Images/Set3/7.jpg', 'Images/Set3/8.jpg'});
+scale = 1;
 num_images = numel(imds.Files);
 train_raw = cell(num_images);
 for i = 1:num_images
@@ -187,12 +188,15 @@ end
 
 function [matched_points1, matched_points2] = featureMatching(I1, I2, feature_vector1, feature_vector2, ratio)
 k = 1;
-f1 = feature_vector1;
-f2 = feature_vector2;
+%f1 = feature_vector1;
+%f2 = feature_vector2;
 for i = 1:size(feature_vector1, 2)
     smallest = inf;
     second_smallest = inf;
     for j = 1:size(feature_vector2, 2)
+        if(feature_vector2(:, j) == -inf)
+            continue
+        end
         d = norm(feature_vector1(:, i) - feature_vector2(:, j))^2;
         if(d < smallest)
             second_smallest = smallest;
@@ -205,8 +209,8 @@ for i = 1:size(feature_vector1, 2)
     if smallest/second_smallest < ratio
         matched_points1(k, :) = [I1(2, i), I1(1, i)];
         matched_points2(k, :) = [I2(2, index), I2(1, index)];
-        feature_vector1(:,i) = [];
-        feature_vector2(:, index) = [];
+        %feature_vector1(:,i) = -inf;
+        feature_vector2(:, index) = -inf;
         k = k + 1;
     end
 end
