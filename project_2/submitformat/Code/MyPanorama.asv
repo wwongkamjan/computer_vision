@@ -1,0 +1,17 @@
+function [pano] = MyPanorama()
+clear all;
+
+path = fileparts(which('MyPanorama.m'));
+folder = regexprep(path, 'Code', '');
+folder = strcat(folder, 'Images\Input\');
+S = dir(fullfile(folder,'*.jpg'));
+scale = 1;
+if size(S,1) > 3 
+    scale = 0.4;
+end
+
+S(1,1).folder
+
+for i = 1: size(S,1)
+    imds = imageDatastore({});
+end
