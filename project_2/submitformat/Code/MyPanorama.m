@@ -10,7 +10,7 @@ if size(S,1) > 3
     scale = 0.4;
 end
 
-imds = imageDatastore(folder,'FileExtensions',{'.jpg'});
+imds = imageDatastore(folder,'FileExtensions',{'.jpg','.jpeg'});
 
 num_images = numel(imds.Files);
 train_raw = cell(num_images);
