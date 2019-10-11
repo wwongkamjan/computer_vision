@@ -26,7 +26,6 @@ for i = 1:num_images
     train{i} = imresize(train_raw{i}, scale);
 end
 
-
 train_gray = cell(num_images);
 corners = cell(num_images);
 imageSize = zeros(num_images,2);
@@ -63,7 +62,9 @@ for i = 2:num_images
   hold on;
   showMatchedFeatures(train{i -1}, train{i}, inliers{i-1}, inliers{i}, 'montage');
   hold off;
-  
+  if size(matched_points{i}, 1) < 20
+     error('Too few points to match!');)
+  end
   %tforms(i) = projective2d(inv(H)');
   tforms(i) = estimateGeometricTransform(inliers{i}, inliers{i - 1},'projective', 'Confidence', 80, 'MaxNumTrials', 2000);
   tforms(i).T = tforms(i).T*tforms(i - 1).T;
