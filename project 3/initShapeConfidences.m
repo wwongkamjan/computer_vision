@@ -14,6 +14,6 @@ local_mask = get_local_windows(Mask, LocalWindows, WindowWidth/2);
 
         d = bwdist(local_mask{1,i});
         ShapeConfidences{1,i} = 1 - exp(-d.^2./sigma_s.^2); %eq 3
-        %imshow(shape_model_confidence_mask_cell{1,i});
+        imshow(ShapeConfidences{1,i});
     end
 end

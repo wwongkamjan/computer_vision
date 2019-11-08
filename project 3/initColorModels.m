@@ -1,4 +1,4 @@
-function ColorModels = initializeColorModels(IMG, Mask, MaskOutline, LocalWindows, BoundaryWidth, WindowWidth)
+function [Fore_prob,ColorModels] = initializeColorModels(IMG, Mask, MaskOutline, LocalWindows, BoundaryWidth, WindowWidth)
 % INITIALIZAECOLORMODELS Initialize color models.  ColorModels is a struct you should define yourself.
 
 s = size(LocalWindows,1);
@@ -41,6 +41,7 @@ s = size(LocalWindows,1);
         numer = sum(numer_window(:));
         denom = sum(wc(:));
         ColorModels{i}.Confidence = 1 - numer/denom;
+        Fore_prob = combined_color_prob_cell;
         %imshow(combined_color_prob_cell{1,i});
     end
 end
