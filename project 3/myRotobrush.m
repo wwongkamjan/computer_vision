@@ -34,17 +34,17 @@ mask1 = load('mask1.mat');
 mask = mask1.mask;
 imshow(imoverlay(images{1}, boundarymask(mask,8),'red'));
 set(gca,'position',[0 0 1 1],'units','normalized')
-% F = getframe(gcf);
-% [I,~] = frame2im(F);
-% imwrite(I, fullfile(fpath, strip(imageNames(1,:))));
-% outputVideo = VideoWriter(fullfile(fpath,'video.mp4'),'MPEG-4');
-% open(outputVideo);
-% writeVideo(outputVideo,I);
+F = getframe(gcf);
+[I,~] = frame2im(F);
+imwrite(I, fullfile(fpath, strip(imageNames(1,:))));
+outputVideo = VideoWriter(fullfile(fpath,'video.mp4'),'MPEG-4');
+open(outputVideo);
+writeVideo(outputVideo,I);
 
 % Sample local windows and initialize shape+color models:
 [mask_outline, LocalWindows] = initLocalWindows(images{1},mask,NumWindows,WindowWidth,true);
 
-[Fore_prob,ColorModels] = ...
+ColorModels = ...
     initColorModels(images{1},mask,mask_outline,LocalWindows,BoundaryWidth,WindowWidth);
 
 % You should set these parameters yourself:
@@ -71,6 +71,7 @@ showColorConfidences(images{1},mask_outline,ColorModels,LocalWindows,WindowWidth
 %%% MAIN LOOP %%%
 % Process each frame in the video.
 for prev=1:(length(files)-1)
+    prev
     curr = prev+1;
     fprintf('Current frame: %i\n', curr)
     
@@ -110,8 +111,7 @@ for prev=1:(length(files)-1)
         fcutoff, ...
         SigmaMin, ...
         R, ...
-        A, ...
-        Fore_prob ...
+        A ...
     );
 
     mask_outline = bwperim(mask,4);

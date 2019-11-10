@@ -1,4 +1,4 @@
-function [Fore_prob,ColorModels] = initializeColorModels(IMG, Mask, MaskOutline, LocalWindows, BoundaryWidth, WindowWidth)
+function ColorModels = initializeColorModels(IMG, Mask, MaskOutline, LocalWindows, BoundaryWidth, WindowWidth)
 % INITIALIZAECOLORMODELS Initialize color models.  ColorModels is a struct you should define yourself.
 
 s = size(LocalWindows,1);
@@ -20,11 +20,13 @@ s = size(LocalWindows,1);
         foreground_pix = rgb2lab(impixel(curr_image,c,r));
         foreground_model = fitgmdist(foreground_pix, 3,'RegularizationValue',0.001,'Options',options);
         foreground_model_cell{1,i} = foreground_model;
+        ColorModels{i}.foreground_model_cell = foreground_model;
         
         [r c] = find(bwdist(local_mask{1,i})>5); %find all non zero that are more than 2 away from foreground 
         background_pix = rgb2lab(impixel(curr_image,c,r));
         background_model = fitgmdist(background_pix, 3,'RegularizationValue',0.001,'Options',options);
         background_model_cell{1,i} = background_model;
+        ColorModels{i}.background_model_cell = background_model;
         
         % probs
         [r c ~] = size(curr_image);
@@ -41,7 +43,7 @@ s = size(LocalWindows,1);
         numer = sum(numer_window(:));
         denom = sum(wc(:));
         ColorModels{i}.Confidence = 1 - numer/denom;
-        Fore_prob = combined_color_prob_cell;
+        %Fore_prob = combined_color_prob_cell;
         %imshow(combined_color_prob_cell{1,i});
     end
 end
