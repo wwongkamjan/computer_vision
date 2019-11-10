@@ -57,7 +57,7 @@ ShapeConfidences = ...
     initShapeConfidences(LocalWindows,ColorModels, mask,...
     WindowWidth, SigmaMin, A, fcutoff, R);
 s = size(LocalWindows,1);
-total_confidence_cell_prev = get_total_confidence_cell(ShapeConfidences,ColorModels,local_mask, s);
+total_confidence_cell_prev = get_total_confidence_cell(ShapeConfidences{1},ColorModels{1}.Confidence,local_mask, s);
 
 % Show initial local windows and output of the color model:
 imshow(images{1})
@@ -152,7 +152,9 @@ for prev=1:5
     );
     
     %mask_outline = bwperim(mask,4);   
-   
+    s = size(LocalWindows,1);
+    total_confidence_cell_prev = get_total_confidence_cell(ShapeConfidences{curr},ColorModels{curr}.Confidence,local_mask, s);
+
    B = bwboundaries(mask);
     imshow(images{curr});
     hold on

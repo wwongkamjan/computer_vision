@@ -112,9 +112,6 @@ function [mask, LocalWindows, ColorModels, ShapeConfidences] = ...
     end
     mask = foreground_numer./foreground_denom;
     mask(isnan(mask))=0;
-    
-    mask = mask >0.3;
-    mask = imfill(mask,'holes');
 end
 
 
