@@ -30,7 +30,7 @@ function [mask, LocalWindows, ColorModels, ShapeConfidences] = ...
         foreground_pix = rgb2lab(impixel(local_windows{1,i},c,r));
         [a b] = size(foreground_pix);
         if a < 100 %if not enough data so loosen boundary
-            [r c] = find(bwdist(inverted)>1);
+            [r c] = find(bwdist(inverted) > 5);
             foreground_pix = rgb2lab(impixel(local_windows{1,i},c,r));
             [a b] = size(foreground_pix);
         end
@@ -40,11 +40,11 @@ function [mask, LocalWindows, ColorModels, ShapeConfidences] = ...
             foreground_model =  ColorModels{i}.foreground_model_cell;
         end
 
-        [r c] = find(bwdist(local_mask{1,i})>5);
+        [r c] = find(bwdist(local_mask{1,i}) > 5);
         background_pix = rgb2lab(impixel(local_windows{1,i},c,r));
         [a b] = size(background_pix);
         if a < 100
-            [r c] = find(bwdist(local_mask{1,i})>1);
+            [r c] = find(bwdist(local_mask{1,i})> 5);
             background_pix = rgb2lab(impixel(local_windows{1,i},c,r));
             [a b] = size(background_pix);
         end
@@ -85,35 +85,11 @@ function [mask, LocalWindows, ColorModels, ShapeConfidences] = ...
 %         hold off
     end
 %-------------------------------------------------------------------------------
- total_confidence_cell = cell(1,s);
-    for j = 1:s
-        fs = ShapeConfidences{j};
-        pc = combined_color_prob_cell2{1,j};
-       % size(pc)
-        total_confidence_cell{1,j}= fs.*local_mask{1,j} + (1-fs).*pc;
-        %imshow(total_confidence_cell{1,i});
-    end
- %--------------------------------------------------------------------------------
- I = rgb2gray(CurrentFrame);
- halfw = WindowWidth/2;
- [h w] = size(I); eps = 0.1;
-    foreground_numer = zeros([h w]);
-    foreground_denom = zeros([h w]);
-    for i = 1:s
-        center = uint32(NewLocalWindows(i, :));
-        cc = center(1); cr = center(2);
-        for a = 1:(halfw*2+1)
-            for b = 1:(halfw*2+1)
-                d = 1.0/(sqrt(double((a-cr).^2+(b-cc).^2))+eps);
-                foreground_numer(cr-halfw+a,cc-halfw+b) = foreground_numer(cr-halfw+a,cc-halfw+b)+total_confidence_cell{1,i}(a,b)*d;
-                foreground_denom(cr-halfw+a,cc-halfw+b) = foreground_denom(cr-halfw+a,cc-halfw+b)+d;
-            end
-        end
-    end
-    mask = foreground_numer./foreground_denom;
-    mask(isnan(mask))=0;
-    
-    mask = mask >0.3;
+   [ColorModels, local_mask] = initializeColorModels(CurrentFrame, warpedMask, warpedMaskOutline, LocalWindows, WindowWidth);
+   ShapeConfidences = initShapeConfidences(LocalWindows, ColorModels, warpedMask, WindowWidth, SigmaMin, A, fcutoff, R); 
+   total_confidence_cell = get_total_confidence_cell(ShapeConfidences,ColorModels,local_mask,s) ;
+    mask = get_final_mask(rgb2gray(CurrentFrame),NewLocalWindows,total_confidence_cell,WindowWidth/2,s);
+    mask = mask > 0.5;
     mask = imfill(mask,'holes');
 end
 

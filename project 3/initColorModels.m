@@ -1,4 +1,4 @@
-function [ColorModels, local_mask] = initializeColorModels(IMG, Mask, MaskOutline, LocalWindows, BoundaryWidth, WindowWidth)
+function [ColorModels, local_mask] = initializeColorModels(IMG, Mask, MaskOutline, LocalWindows, WindowWidth)
 % INITIALIZAECOLORMODELS Initialize color models.  ColorModels is a struct you should define yourself.
 
 s = size(LocalWindows,1);

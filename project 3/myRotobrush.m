@@ -45,7 +45,7 @@ writeVideo(outputVideo,I);
 [mask_outline, LocalWindows] = initLocalWindows(images{1},mask,NumWindows,WindowWidth,true);
 
 [ColorModels, local_mask] = ...
-    initColorModels(images{1},mask,mask_outline,LocalWindows,BoundaryWidth,WindowWidth);
+    initColorModels(images{1},mask,mask_outline,LocalWindows,WindowWidth);
 
 % You should set these parameters yourself:
 fcutoff = 0.6;
@@ -56,41 +56,23 @@ A = (SigmaMax-SigmaMin)/(1-fcutoff)^R;
 ShapeConfidences = ...
     initShapeConfidences(LocalWindows,ColorModels, mask,...
     WindowWidth, SigmaMin, A, fcutoff, R);
+
 s = size(LocalWindows,1);
-total_confidence_cell_prev = get_total_confidence_cell(ShapeConfidences,ColorModels,local_mask, s);
+total_confidence_cell = get_total_confidence_cell(ShapeConfidences,ColorModels,local_mask, s);
 
 % Show initial local windows and output of the color model:
-imshow(images{1})
-hold on
-showLocalWindows(LocalWindows,WindowWidth,'r.');
-hold off
-set(gca,'position',[0 0 1 1],'units','normalized')
-F = getframe(gcf);
-[I,~] = frame2im(F);
+% imshow(images{1})
+% hold on
+% showLocalWindows(LocalWindows,WindowWidth,'r.');
+% hold off
+% set(gca,'position',[0 0 1 1],'units','normalized')
+% F = getframe(gcf);
+% [I,~] = frame2im(F);
+% showColorConfidences(images{1},mask_outline,ColorModels,LocalWindows,WindowWidth);
 
-showColorConfidences(images{1},mask_outline,ColorModels,LocalWindows,WindowWidth);
-
-I = rgb2gray(images{1});
- halfw = WindowWidth/2;
- [h w] = size(I); eps = 0.1;
-    foreground_numer = zeros([h w]);
-    foreground_denom = zeros([h w]);
-    for i = 1:s
-        center = uint32(LocalWindows(i, :));
-        cc = center(1); cr = center(2);
-        for a = 1:(halfw*2+1)
-            for b = 1:(halfw*2+1)
-                d = 1.0/(sqrt(double((a-cr).^2+(b-cc).^2))+eps);
-                foreground_numer(cr-halfw+a,cc-halfw+b) = foreground_numer(cr-halfw+a,cc-halfw+b)+total_confidence_cell_prev{1,i}(a,b)*d;
-                foreground_denom(cr-halfw+a,cc-halfw+b) = foreground_denom(cr-halfw+a,cc-halfw+b)+d;
-            end
-        end
-    end
-    mask = foreground_numer./foreground_denom;
-    mask(isnan(mask))=0;
-    
-    mask = mask >0.5;
-    mask = imfill(mask,'holes');
+mask = get_final_mask(images{1}, LocalWindows, total_confidence_cell, WindowWidth/2, s);    
+mask = mask >0.5;
+mask = imfill(mask,'holes');
     
  B = bwboundaries(mask);
 imshow(images{1,1});
@@ -100,7 +82,7 @@ for k = 1:length(B)
     plot(boundary(:,2), boundary(:,1), 'r', 'LineWidth', 2)
 end
 hold off
-saveas(gcf,sprintf('../Output/%d.jpg',1));
+saveas(gcf,sprintf('../output/%d.jpg',1));
 close all
 figure
     
@@ -108,7 +90,6 @@ figure
 % Process each frame in the video.
 for prev=1:5
 %for prev=1:(length(files)-1)
-    prev
     curr = prev+1;
     fprintf('Current frame: %i\n', curr)
     
@@ -153,7 +134,7 @@ for prev=1:5
     
     %mask_outline = bwperim(mask,4);   
    
-   B = bwboundaries(mask);
+    B = bwboundaries(mask);
     imshow(images{curr});
     hold on
     for k = 1:length(B)
