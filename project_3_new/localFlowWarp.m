@@ -1,4 +1,4 @@
-function [NewLocalWindows] = localFlowWarp(WarpedPrevFrame, CurrentFrame, LocalWindows, Mask, Width)
+function [LocalWindows] = localFlowWarp(WarpedPrevFrame, CurrentFrame, LocalWindows, Mask, Width, local_mask)
 % LOCALFLOWWARP Calculate local window movement based on optical flow between frames.
 
 % TODO
@@ -11,7 +11,7 @@ function [NewLocalWindows] = localFlowWarp(WarpedPrevFrame, CurrentFrame, LocalW
 
     s = size(LocalWindows, 1);
     halfw = Width/2;
-    [myh myw] = size(rgb2gray(WarpedPrevFrame));
+    [myh, myw] = size(rgb2gray(WarpedPrevFrame));
     
     opticFlow = opticalFlowFarneback('NeighborhoodSize',8);
     estimateFlow(opticFlow,rgb2gray(WarpedPrevFrame));
@@ -19,7 +19,7 @@ function [NewLocalWindows] = localFlowWarp(WarpedPrevFrame, CurrentFrame, LocalW
     
     VxWindows = get_local_windows(flow.Vx, LocalWindows, halfw);
     VyWindows = get_local_windows(flow.Vy, LocalWindows, halfw);
-    local_mask = get_local_windows(Mask, LocalWindows, Width/2);
+    %local_mask = get_local_windows(Mask, LocalWindows, Width/2);
     
     for i = 1:s
         %get mean within foreground
@@ -34,7 +34,7 @@ function [NewLocalWindows] = localFlowWarp(WarpedPrevFrame, CurrentFrame, LocalW
         end
 
         new_center = double(LocalWindows(i,:)) + [Vymean Vxmean];
-        if new_center(1)+halfw >= myh || new_center(1)-halfw <= 1 || new_center(2)+halfw >= myw || new_center(2)-halfw <= 1
+        if new_center(1)+halfw >= myw || new_center(1)-halfw <= 1 || new_center(2)+halfw >= myh || new_center(2)-halfw <= 1
             if i == 1
                 new_center = double(LocalWindows(1,:));
             else
@@ -43,6 +43,6 @@ function [NewLocalWindows] = localFlowWarp(WarpedPrevFrame, CurrentFrame, LocalW
         end
         LocalWindows(i, :) = double(new_center);
     end
-    NewLocalWindows = LocalWindows;
+    %NewLocalWindows = LocalWindows;
 end
 

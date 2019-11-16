@@ -4,7 +4,9 @@ function foreground2 = get_final_mask(IMG, LocalWindows, total_confidence_cell, 
     foreground_numer = zeros([h w]);
     foreground_denom = zeros([h w]);
     for i = 1:s
-        center = uint32(LocalWindows(i, :)); cc = center(1); cr = center(2);
+        center = uint32(LocalWindows(i, :)); 
+        cc = center(1); 
+        cr = center(2);
         for a = 1:(halfw*2+1)
             for b = 1:(halfw*2+1)
                 d = 1.0/(sqrt(double((a-cr).^2+(b-cc).^2))+eps);

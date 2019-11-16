@@ -1,7 +1,7 @@
 function [ColorModels, local_mask] = initColorModels(IMG, Mask, MaskOutline, LocalWindows, WindowWidth)
 % INITIALIZAECOLORMODELS Initialize color models.  ColorModels is a struct you should define yourself.
 
-s = size(LocalWindows,1);
+    s = size(LocalWindows,1);
 
 % Must define a field ColorModels.Confidences: a cell array of the color confidence map for each local window.
     local_windows = get_local_windows(IMG, LocalWindows, WindowWidth/2);
@@ -10,7 +10,7 @@ s = size(LocalWindows,1);
     combined_color_prob_cell = cell(1,s);
     foreground_model_cell = cell(1,s);
     background_model_cell = cell(1,s);
-    options = statset('MaxIter',200);
+    options = statset('MaxIter',500);
     
     for i = 1:s
         curr_image = local_windows{1,i};
@@ -37,6 +37,7 @@ s = size(LocalWindows,1);
 
         comb_prob = fore_prob./(fore_prob+back_prob);
         combined_color_prob_cell{1,i} = reshape(comb_prob,[r c]);
+        
         d = bwdist(local_mask{1,i});
         wc = exp(-d.^2./(WindowWidth/2).^2);
         numer_window = abs(local_mask{1,i} - combined_color_prob_cell{1,i}).*wc; 

@@ -5,9 +5,9 @@
 % Feel free to modify this code as you see fit.
 clear all;
 % Some parameters you need to tune:
-WindowWidth = 60;  
+WindowWidth = 40;  
 ProbMaskThreshold = -1; 
-NumWindows= 40; 
+NumWindows= 20; 
 BoundaryWidth = -1;
 
 % Load images:
@@ -43,8 +43,7 @@ writeVideo(outputVideo,I);
 
 % Sample local windows and initialize shape+color models:
 [mask_outline, LocalWindows] = initLocalWindows(images{1},mask,NumWindows,WindowWidth,true);
-%local_windows = get_local_windows(IMG, LocalWindows, WindowWidth/2);
-%local_mask = get_local_windows(mask, LocalWindows, WindowWidth/2);
+
 [ColorModels, local_mask] = ...
     initColorModels(images{1},mask,mask_outline,LocalWindows,WindowWidth);
 
@@ -55,8 +54,8 @@ SigmaMax = WindowWidth+1;
 R = 2;
 A = (SigmaMax-SigmaMin)/(1-fcutoff)^R;
 ShapeConfidences = ...
-    initShapeConfidences(LocalWindows,ColorModels, local_mask,...
-    SigmaMin, SigmaMax, A, fcutoff, R);
+    initShapeConfidences(LocalWindows,ColorModels, mask,...
+    WindowWidth, SigmaMin, SigmaMax, A, fcutoff, R);
 
 s = size(LocalWindows,1);
 total_confidence_cell = get_total_confidence_cell(ShapeConfidences,ColorModels,local_mask, s);
@@ -71,8 +70,8 @@ total_confidence_cell = get_total_confidence_cell(ShapeConfidences,ColorModels,l
 % [I,~] = frame2im(F);
 % showColorConfidences(images{1},mask_outline,ColorModels,LocalWindows,WindowWidth);
 
-mask1 = get_final_mask(rgb2gray(images{1}), LocalWindows, total_confidence_cell, WindowWidth/2, s);    
-mask = mask1 >0.5;
+mask = get_final_mask(rgb2gray(images{1}), LocalWindows, total_confidence_cell, WindowWidth/2, s);    
+mask = mask >0.5;
 mask = imfill(mask,'holes');
     
  B = bwboundaries(mask);
@@ -99,7 +98,7 @@ for prev=1:5
     
     %%% Calculate and apply local warping based on optical flow:
     NewLocalWindows = ...
-        localFlowWarp(warpedFrame, images{curr}, warpedLocalWindows,warpedMask,WindowWidth, local_mask);
+        localFlowWarp(warpedFrame, images{curr}, warpedLocalWindows,warpedMask,WindowWidth);
     
     % Show windows before and after optical flow-based warp:
     imshow(images{curr});
@@ -121,7 +120,6 @@ for prev=1:5
         NewLocalWindows, ...
         LocalWindows, ...
         images{curr}, ...
-        mask, ...
         warpedMask, ...
         warpedMaskOutline, ...
         WindowWidth, ...
