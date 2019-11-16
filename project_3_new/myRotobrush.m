@@ -7,7 +7,7 @@ clear all;
 % Some parameters you need to tune:
 WindowWidth = 60;  
 ProbMaskThreshold = -1; 
-NumWindows= 40; 
+NumWindows= 80; 
 BoundaryWidth = -1;
 
 % Load images:
@@ -89,11 +89,14 @@ figure
     
 %%% MAIN LOOP %%%
 % Process each frame in the video.
-for prev=1:5
+for prev=1:4
 %for prev=1:(length(files)-1)
     curr = prev+1;
     fprintf('Current frame: %i\n', curr)
-    
+%     hold on;
+%     figure
+%     imshow(mask)
+%     hold off;
     %%% Global affine transform between previous and current frames:
     [warpedFrame, warpedMask, warpedMaskOutline, warpedLocalWindows] = calculateGlobalAffine(images{prev}, images{curr}, mask, LocalWindows, WindowWidth);
     
@@ -113,6 +116,7 @@ for prev=1:5
     % Feel free to redefine this as several different functions if you prefer.
     [ ...
         mask, ...
+        mask_outline, ...
         LocalWindows, ...
         ColorModels, ...
         ShapeConfidences, ...
@@ -137,7 +141,7 @@ for prev=1:5
     
     %mask_outline = bwperim(mask,4);   
    
-    B = bwboundaries(mask);
+    B = bwboundaries(mask_outline);
     imshow(images{curr});
     hold on
     for k = 1:length(B)
@@ -145,6 +149,7 @@ for prev=1:5
         plot(boundary(:,2), boundary(:,1), 'r', 'LineWidth', 2)
     end
     hold off
+    pause(2)
     saveas(gcf,sprintf('../output/%d.jpg',prev));
     
     % Write video frame:

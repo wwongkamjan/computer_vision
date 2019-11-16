@@ -1,5 +1,5 @@
 function foreground2 = get_final_mask(IMG, LocalWindows, total_confidence_cell, halfw, s)
-    [h w] = size(IMG); 
+    [h, w] = size(IMG); 
     eps = 0.1;
     foreground_numer = zeros([h w]);
     foreground_denom = zeros([h w]);
@@ -10,11 +10,16 @@ function foreground2 = get_final_mask(IMG, LocalWindows, total_confidence_cell, 
         for a = 1:(halfw*2+1)
             for b = 1:(halfw*2+1)
                 d = 1.0/(sqrt(double((a-cr).^2+(b-cc).^2))+eps);
-                foreground_numer(cr-halfw+a,cc-halfw+b) = foreground_numer(cr-halfw+a,cc-halfw+b)+total_confidence_cell{1,i}(a,b)*d;
+                foreground_numer(cr-halfw+a,cc-halfw+b) = foreground_numer(cr-halfw+a,cc-halfw+b) + total_confidence_cell{1,i}(a,b)*d;
                 foreground_denom(cr-halfw+a,cc-halfw+b) = foreground_denom(cr-halfw+a,cc-halfw+b)+d;
+                %foreground2 = foreground_numer;
             end
         end
     end
     foreground2 = foreground_numer./foreground_denom;
-    foreground2(isnan(foreground2))=0;
+    foreground2(isnan(foreground2)) = 0;
+%     L = superpixels(IMG,500);
+%     f = find(foreground2>0.9); 
+%     b = find(foreground2<=0.9);
+%     foreground2 = lazysnapping(IMG,L,f,b);
 end

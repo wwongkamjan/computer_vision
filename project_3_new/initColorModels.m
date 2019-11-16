@@ -44,6 +44,7 @@ function [ColorModels, local_mask] = initColorModels(IMG, Mask, MaskOutline, Loc
         numer = sum(numer_window(:));
         denom = sum(wc(:));
         ColorModels{i}.Confidence = 1 - numer/denom;
+        ColorModels{i}.combined = combined_color_prob_cell{1,i};
         %Fore_prob = combined_color_prob_cell;
         %imshow(combined_color_prob_cell{1,i});
     end

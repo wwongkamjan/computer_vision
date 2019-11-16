@@ -18,8 +18,8 @@ function [WarpedFrame, WarpedMask, WarpedMaskOutline, WarpedLocalWindows] = calc
         maxc = uint32(max(center_arr(:,1))); 
         minr = uint32(min(center_arr(:,2))); 
         maxr = uint32(max(center_arr(:,2)));         
-        gray_im1 = gray_im1(minr - halfw - 5 : maxr + halfw + 5, minc - halfw - 5 : maxc + halfw + 5);
-        gray_im2 = gray_im2(minr - halfw - 5 : maxr + halfw + 5, minc - halfw - 5 : maxc + halfw + 5);    
+        gray_im1 = gray_im1(minr - halfw - 20 : maxr + halfw + 20, minc - halfw - 20 : maxc + halfw + 20);
+        gray_im2 = gray_im2(minr - halfw - 20 : maxr + halfw + 20, minc - halfw - 20 : maxc + halfw + 20);    
         %match stuff
         points1 = detectSURFFeatures(gray_im1,'MetricThreshold',50);
         points2 = detectSURFFeatures(gray_im2,'MetricThreshold',50);
@@ -39,8 +39,8 @@ function [WarpedFrame, WarpedMask, WarpedMaskOutline, WarpedLocalWindows] = calc
             mycenter = Windows(i,:);
             cr = double(mycenter(1)); 
             cc = double(mycenter(2));
-            %[newr,newc] = transformPointsForward(invert(my_transformation), cr, cc);
-            [newr,newc] = transformPointsForward(my_transformation, cr, cc);
+            [newr,newc] = transformPointsForward(invert(my_transformation), cr, cc);
+            %[newr,newc] = transformPointsForward(my_transformation, cr, cc);
             WarpedLocalWindows(i,:) = double([newr newc]);
         end
 end
