@@ -13,8 +13,8 @@ addpath(ToolboxPath);
 %% Load Data
 % Download data from the following link: 
 % https://drive.google.com/open?id=1ZFXZEv4yWgaVDE1JD6-oYL2KQDypnEUU
-load('DataSquareNew.mat');
-%load('DataMappingNew.mat');
+%load('DataSquareNew.mat');
+load('DataMappingNew.mat');
 load('CalibParams.mat');
 
 %% SLAM Using GTSAM
@@ -22,10 +22,10 @@ load('CalibParams.mat');
                                                 %IMU, LeftImgs, TLeftImgs);
                                                 
 %% Estimating pose for origin (R)
-%pos = 19
+pos = 19;
 F1 = DetAll{1};
-X1 = [F1(30,2), F1(30,4), F1(30,6), F1(30,8)];
-Y1 = [F1(30,3), F1(30,5), F1(30,7),F1(30,9)];
+X1 = [F1(pos,2), F1(pos,4), F1(pos,6), F1(pos,8)];
+Y1 = [F1(pos,3), F1(pos,5), F1(pos,7),F1(pos,9)];
 
 tags =[];
 for foo=1:length(DetAll)
@@ -118,9 +118,10 @@ for i= 2:length(DetAll)
     camPose{1,i} = [R T];
     imagePoints =[];
     worldPoints = [];
-    for j = 2:length(DetAll{i})
+    for j = 2:size(DetAll{i}, 1)
         IC = DetAll{i};
-        if ismember(IC(j,1),CommonTag)
+        
+        if ismember(IC(j,1), CommonTag)
            %F1 = DetAllReal{i-1};
            %F1 = TryDetAllReal()
            set1 = TryDetAllReal(:,1);
@@ -149,7 +150,7 @@ for i= 2:length(DetAll)
     
     [worldOrientation,worldLocation] = estimateWorldCameraPose(imagePoints,...
                                         worldPoints, K_graph, 'Confidence', 5);
-         plot3(worldLocation(1), worldLocation(2), worldLocation(3))
+         plot3(worldLocation(1), worldLocation(2), worldLocation(3), 'blacko', 'DisplayName', 'Poses')
          hold on;
     DetAllReal{i}= temp;
     
