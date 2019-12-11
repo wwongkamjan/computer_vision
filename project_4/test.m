@@ -67,9 +67,9 @@ for j = 1:length(DetAll{1})
     [x4,y4] = apply_homography(H, curr(8), curr(9));
 
     if IC(j,1) ~= 10
-        temp1 = [IC(j,1) x1 y1 0 x2 y2 0 x3 y3 0 x4 y4 0];
+        temp1 = [IC(j,1) x1 y1 1 x2 y2 1 x3 y3 1 x4 y4 1];
     else
-        temp1 = [10 0 0 0 TagSize 0 0 TagSize TagSize 0 0 TagSize 0];
+        temp1 = [10 0 0 1 TagSize 0 1 TagSize TagSize 1 0 TagSize 1];
         %temp1 = [10 0 0 TagSize 0 TagSize TagSize 0 TagSize 0 0 0 0];
     end 
     temp = [temp; temp1];
@@ -130,7 +130,7 @@ for i= 2:length(DetAll)
            imagePoints = [imagePoints; x(2) x(3); x(4) x(5); x(6) x(7); x(8) x(9)];
            tag = TryDetAllReal(ind,:);
            temp1 = [IC(j,1) tag(2) tag(3) 1 tag(4) tag(5) 1 tag(6) tag(7) 1 tag(8) tag(9) 1];
-           worldPoints = [worldPoints; tag(2) tag(3) 1; tag(4) tag(5) 1; tag(6) tag(7) 1; tag(8) tag(9) 1];
+           worldPoints = [worldPoints; tag(2) tag(3) 1; tag(5) tag(6) 1; tag(8) tag(9) 1; tag(11) tag(12) 1];
            
         else
            curr = IC(j,:);
